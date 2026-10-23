@@ -53,6 +53,10 @@ bash install.sh --stop       # webinstaller stoppen en opruimen
 
 Na afloop staan alle gegevens in `/root/wiredhosting-panel.txt` en het log in `/var/lib/wiredhosting-installer/install.log`.
 
+## Support
+
+Vragen of problemen? Kijk op [wiredhosting.nl](https://wiredhosting.nl) of mail naar info@wiredhosting.nl.
+
 ---
 
 Copyright (c) 2026 WiredHosting. Alle rechten voorbehouden. Pterodactyl Panel en Wings zijn software van derden onder de MIT licentie.
