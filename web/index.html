@@ -1,0 +1,1416 @@
+<!doctype html>
+<html lang="nl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>WiredHosting Installer</title>
+<!--
+  WiredHosting Panel Installer - webinstaller
+  Copyright (c) 2026 WiredHosting. Alle rechten voorbehouden.
+-->
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%234f6cff'/%3E%3Cpath d='M7 10l3.5 12L14 13l2 0 3.5 9L23 10' stroke='white' stroke-width='2.6' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E">
+<style>
+:root {
+  --bg: #f4f6fb;
+  --bg-2: #eaeef8;
+  --card: #ffffff;
+  --text: #0f172a;
+  --muted: #5b6478;
+  --line: #dfe4ee;
+  --line-2: #c9d1e1;
+  --accent: #4f6cff;
+  --accent-2: #3a55e6;
+  --accent-soft: #e9edff;
+  --ok: #12a150;
+  --ok-soft: #e4f7ec;
+  --warn: #b7791f;
+  --warn-soft: #fff5e0;
+  --bad: #d43c3c;
+  --bad-soft: #fdeaea;
+  --term-bg: #0b1020;
+  --term-text: #c9d4f2;
+  --shadow: 0 1px 2px rgba(15, 23, 42, .06), 0 8px 24px rgba(15, 23, 42, .06);
+  --radius: 14px;
+  color-scheme: light;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0b0f19;
+    --bg-2: #111727;
+    --card: #141b2d;
+    --text: #e6eaf5;
+    --muted: #93a0bb;
+    --line: #232c43;
+    --line-2: #2f3a56;
+    --accent: #7088ff;
+    --accent-2: #8ea0ff;
+    --accent-soft: #1c2546;
+    --ok: #3ccf7f;
+    --ok-soft: #12291d;
+    --warn: #f0b354;
+    --warn-soft: #2b2312;
+    --bad: #ff6b6b;
+    --bad-soft: #2f1616;
+    --term-bg: #070a13;
+    --shadow: 0 1px 2px rgba(0, 0, 0, .3), 0 8px 24px rgba(0, 0, 0, .25);
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0b0f19; --bg-2: #111727; --card: #141b2d; --text: #e6eaf5; --muted: #93a0bb;
+  --line: #232c43; --line-2: #2f3a56; --accent: #7088ff; --accent-2: #8ea0ff; --accent-soft: #1c2546;
+  --ok: #3ccf7f; --ok-soft: #12291d; --warn: #f0b354; --warn-soft: #2b2312; --bad: #ff6b6b; --bad-soft: #2f1616;
+  --term-bg: #070a13; --shadow: 0 1px 2px rgba(0,0,0,.3), 0 8px 24px rgba(0,0,0,.25); color-scheme: dark;
+}
+
+* { box-sizing: border-box; }
+html, body { margin: 0; }
+body {
+  background: var(--bg);
+  color: var(--text);
+  font: 15px/1.55 system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  min-height: 100vh;
+}
+a { color: var(--accent); }
+code, pre, .mono { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace; }
+.hidden { display: none !important; }
+
+/* ---------- header ---------- */
+.top {
+  border-bottom: 1px solid var(--line);
+  background: color-mix(in srgb, var(--card) 85%, transparent);
+  backdrop-filter: blur(8px);
+  position: sticky; top: 0; z-index: 10;
+}
+.top-in { max-width: 1060px; margin: 0 auto; padding: 14px 20px; display: flex; align-items: center; gap: 14px; }
+.logo { width: 34px; height: 34px; border-radius: 9px; background: var(--accent); display: grid; place-items: center; flex: none; }
+.brand b { display: block; font-size: 16px; letter-spacing: -.01em; }
+.brand span { color: var(--muted); font-size: 13px; }
+.chip {
+  margin-left: auto; display: flex; gap: 8px; align-items: center;
+  font-size: 12.5px; color: var(--muted); border: 1px solid var(--line); padding: 6px 10px; border-radius: 999px;
+  background: var(--card); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 50%;
+}
+.dot { width: 8px; height: 8px; border-radius: 50%; background: var(--ok); flex: none; }
+
+/* ---------- layout ---------- */
+.wrap { max-width: 1060px; margin: 0 auto; padding: 28px 20px 80px; display: grid; grid-template-columns: 230px 1fr; gap: 28px; }
+.steps { position: sticky; top: 86px; align-self: start; list-style: none; margin: 0; padding: 0; }
+.steps li { display: flex; align-items: center; gap: 12px; padding: 9px 10px; border-radius: 10px; color: var(--muted); font-size: 14px; cursor: default; }
+.steps li .n {
+  width: 26px; height: 26px; border-radius: 50%; display: grid; place-items: center; font-size: 12.5px; font-weight: 600;
+  border: 1.5px solid var(--line-2); background: var(--card); flex: none;
+}
+.steps li.done { color: var(--text); cursor: pointer; }
+.steps li.done .n { background: var(--ok); border-color: var(--ok); color: #fff; }
+.steps li.active { background: var(--accent-soft); color: var(--text); font-weight: 600; }
+.steps li.active .n { background: var(--accent); border-color: var(--accent); color: #fff; }
+
+.card { background: var(--card); border: 1px solid var(--line); border-radius: var(--radius); box-shadow: var(--shadow); padding: 28px; }
+h1 { font-size: 24px; letter-spacing: -.02em; margin: 0 0 6px; line-height: 1.25; }
+h2 { font-size: 16px; margin: 28px 0 4px; letter-spacing: -.01em; }
+h2:first-child { margin-top: 0; }
+.lead { color: var(--muted); margin: 0 0 22px; }
+.sub { color: var(--muted); font-size: 13.5px; margin: 0 0 14px; }
+
+/* ---------- option cards ---------- */
+.opts { display: grid; gap: 12px; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); }
+.opt { position: relative; display: block; cursor: pointer; }
+.opt input { position: absolute; opacity: 0; pointer-events: none; }
+.opt .box {
+  height: 100%; border: 1.5px solid var(--line); border-radius: 12px; padding: 16px; background: var(--card);
+  transition: border-color .15s, box-shadow .15s, background .15s;
+}
+.opt:hover .box { border-color: var(--line-2); }
+.opt input:checked + .box { border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-soft); }
+.opt input:focus-visible + .box { outline: 2px solid var(--accent); outline-offset: 2px; }
+.opt .t { font-weight: 600; display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.opt .d { color: var(--muted); font-size: 13.5px; margin-top: 4px; }
+.opt .u { margin-top: 8px; font-size: 13px; color: var(--accent); word-break: break-all; }
+.badge { font-size: 11px; font-weight: 600; padding: 2px 8px; border-radius: 999px; background: var(--ok-soft); color: var(--ok); letter-spacing: .01em; }
+.badge.warn { background: var(--warn-soft); color: var(--warn); }
+.badge.grey { background: var(--bg-2); color: var(--muted); }
+.ico { width: 34px; height: 34px; border-radius: 9px; background: var(--accent-soft); color: var(--accent); display: grid; place-items: center; margin-bottom: 10px; }
+
+/* ---------- fields ---------- */
+.grid { display: grid; gap: 16px 18px; grid-template-columns: 1fr 1fr; }
+.grid .full { grid-column: 1 / -1; }
+.field label { display: block; font-weight: 600; font-size: 13.5px; margin-bottom: 6px; }
+.field .hint { color: var(--muted); font-size: 12.5px; margin-top: 5px; }
+.field .err { color: var(--bad); font-size: 12.5px; margin-top: 5px; display: none; }
+.field.bad .err { display: block; }
+.field.bad input, .field.bad select { border-color: var(--bad); }
+input[type=text], input[type=email], input[type=password], input[type=number], input[type=url], select {
+  width: 100%; padding: 10px 12px; border-radius: 10px; border: 1.5px solid var(--line); background: var(--card);
+  color: var(--text); font: inherit; transition: border-color .15s, box-shadow .15s;
+}
+input:focus, select:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-soft); }
+input::placeholder { color: color-mix(in srgb, var(--muted) 75%, transparent); }
+.inrow { display: flex; gap: 8px; }
+.inrow input { flex: 1; min-width: 0; }
+
+.switch { display: flex; gap: 14px; align-items: flex-start; padding: 16px; border: 1.5px solid var(--line); border-radius: 12px; cursor: pointer; }
+.switch input { position: absolute; opacity: 0; pointer-events: none; }
+.switch .tg { width: 40px; height: 23px; border-radius: 999px; background: var(--line-2); position: relative; flex: none; transition: background .15s; margin-top: 1px; }
+.switch .tg::after { content: ""; position: absolute; top: 3px; left: 3px; width: 17px; height: 17px; border-radius: 50%; background: #fff; transition: transform .15s; box-shadow: 0 1px 2px rgba(0,0,0,.2); }
+.switch input:checked + .tg { background: var(--accent); }
+.switch input:checked + .tg::after { transform: translateX(17px); }
+.switch input:focus-visible + .tg { outline: 2px solid var(--accent); outline-offset: 2px; }
+.switch .t { font-weight: 600; }
+.switch .d { color: var(--muted); font-size: 13.5px; }
+
+details.adv { margin-top: 18px; border: 1px dashed var(--line-2); border-radius: 12px; padding: 4px 16px; }
+details.adv summary { cursor: pointer; padding: 10px 0; font-weight: 600; font-size: 14px; color: var(--muted); }
+details.adv[open] { padding-bottom: 16px; }
+
+.note { display: flex; gap: 10px; padding: 12px 14px; border-radius: 10px; font-size: 13.5px; background: var(--accent-soft); margin: 16px 0 0; }
+.note.warn { background: var(--warn-soft); }
+.note.bad { background: var(--bad-soft); }
+.note.ok { background: var(--ok-soft); }
+.note b { font-weight: 600; }
+
+/* ---------- buttons ---------- */
+.nav { display: flex; gap: 10px; justify-content: space-between; margin-top: 28px; padding-top: 20px; border-top: 1px solid var(--line); }
+.btn {
+  appearance: none; border: 1.5px solid var(--line); background: var(--card); color: var(--text); font: inherit; font-weight: 600;
+  padding: 10px 18px; border-radius: 10px; cursor: pointer; display: inline-flex; align-items: center; gap: 8px; text-decoration: none;
+}
+.btn:hover { border-color: var(--line-2); }
+.btn.primary { background: var(--accent); border-color: var(--accent); color: #fff; }
+.btn.primary:hover { background: var(--accent-2); border-color: var(--accent-2); }
+.btn.big { padding: 13px 22px; font-size: 15.5px; }
+.btn.small { padding: 7px 12px; font-size: 13px; }
+.btn:disabled { opacity: .55; cursor: not-allowed; }
+
+/* ---------- server info ---------- */
+.sysgrid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-bottom: 22px; }
+.sys { border: 1px solid var(--line); border-radius: 12px; padding: 12px 14px; background: var(--bg); min-width: 0; }
+.sys small { color: var(--muted); font-size: 12px; display: block; }
+.sys b { font-size: 14px; display: block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+/* ---------- review ---------- */
+.sum { border: 1px solid var(--line); border-radius: 12px; overflow: hidden; }
+.sum .sec { padding: 10px 16px; background: var(--bg); font-weight: 600; font-size: 13px; color: var(--muted); border-bottom: 1px solid var(--line); display: flex; justify-content: space-between; align-items: center; }
+.sum .sec a { font-weight: 600; font-size: 12.5px; cursor: pointer; text-decoration: none; }
+.sum dl { margin: 0; display: grid; grid-template-columns: 200px 1fr; }
+.sum dt, .sum dd { padding: 9px 16px; border-bottom: 1px solid var(--line); margin: 0; font-size: 14px; }
+.sum dt { color: var(--muted); }
+.sum dd { word-break: break-word; }
+.sum dl:last-child dt:last-of-type, .sum dl:last-child dd:last-of-type { border-bottom: 0; }
+
+/* ---------- progress ---------- */
+.prog-head { display: flex; align-items: center; gap: 16px; }
+.spinner { width: 42px; height: 42px; border-radius: 50%; border: 4px solid var(--accent-soft); border-top-color: var(--accent); animation: spin 1s linear infinite; flex: none; }
+@keyframes spin { to { transform: rotate(360deg); } }
+.big-ico { width: 46px; height: 46px; border-radius: 50%; display: grid; place-items: center; flex: none; color: #fff; }
+.big-ico.ok { background: var(--ok); }
+.big-ico.bad { background: var(--bad); }
+.bar { height: 10px; background: var(--bg-2); border-radius: 999px; overflow: hidden; margin: 22px 0 6px; }
+.bar i { display: block; height: 100%; width: 0; background: linear-gradient(90deg, var(--accent), var(--accent-2)); border-radius: 999px; transition: width .6s ease; }
+.bar-meta { display: flex; justify-content: space-between; color: var(--muted); font-size: 13px; }
+.plist { list-style: none; padding: 0; margin: 22px 0 0; display: grid; gap: 2px; }
+.plist li { display: flex; gap: 12px; align-items: center; padding: 8px 10px; border-radius: 9px; color: var(--muted); font-size: 14px; }
+.plist li .s { width: 22px; height: 22px; border-radius: 50%; border: 1.5px solid var(--line-2); flex: none; display: grid; place-items: center; }
+.plist li.done { color: var(--text); }
+.plist li.done .s { background: var(--ok); border-color: var(--ok); color: #fff; }
+.plist li.active { background: var(--accent-soft); color: var(--text); font-weight: 600; }
+.plist li.active .s { border-color: var(--accent); border-top-color: transparent; animation: spin .9s linear infinite; }
+.plist li.failed { background: var(--bad-soft); color: var(--text); font-weight: 600; }
+.plist li.failed .s { background: var(--bad); border-color: var(--bad); color: #fff; }
+
+.term-wrap { margin-top: 22px; }
+.term-bar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+.term-bar b { font-size: 14px; }
+pre.term {
+  margin: 0; background: var(--term-bg); color: var(--term-text); border-radius: 12px; padding: 14px 16px; font-size: 12.5px;
+  line-height: 1.5; height: 320px; overflow: auto; white-space: pre-wrap; word-break: break-word;
+}
+pre.creds {
+  margin: 0; background: var(--bg); border: 1px solid var(--line); border-radius: 12px; padding: 14px 16px; font-size: 13px;
+  overflow: auto; white-space: pre-wrap; word-break: break-word; max-height: 420px;
+}
+.result-actions { display: flex; gap: 10px; flex-wrap: wrap; margin: 20px 0 8px; }
+.center { text-align: center; padding: 60px 20px; }
+
+@media (max-width: 860px) {
+  .wrap { grid-template-columns: 1fr; padding-top: 18px; }
+  .steps { position: static; display: flex; overflow-x: auto; gap: 4px; padding-bottom: 4px; }
+  .steps li { flex: none; padding: 6px 10px; }
+  .steps li .lbl { display: none; }
+  .steps li.active .lbl { display: inline; }
+  .sysgrid { grid-template-columns: 1fr 1fr; }
+}
+@media (max-width: 560px) {
+  .top-in { padding: 12px 16px; }
+  .chip { display: none; }
+  .wrap { padding: 16px 16px 60px; }
+  .card { padding: 20px 16px; }
+  .grid { grid-template-columns: 1fr; }
+  .sum dl { grid-template-columns: 1fr; }
+  .sum dt { border-bottom: 0; padding-bottom: 0; font-size: 12.5px; }
+  .nav { flex-direction: column-reverse; }
+  .nav .btn { justify-content: center; }
+  h1 { font-size: 21px; }
+}
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div class="top-in">
+    <div class="logo" aria-hidden="true">
+      <svg width="20" height="20" viewBox="0 0 32 32"><path d="M5 9l4.5 14L14 12h4l4.5 11L27 9" stroke="#fff" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </div>
+    <div class="brand"><b>WiredHosting</b><span>Pterodactyl Installer</span></div>
+    <div class="chip" id="chip"><span class="dot"></span><span id="chipText">Verbinden...</span></div>
+  </div>
+</header>
+
+<!-- Geen of verkeerde link -->
+<main id="vNoToken" class="hidden">
+  <div class="wrap" style="grid-template-columns:1fr; max-width:640px">
+    <div class="card center">
+      <h1>Open de link uit je SSH sessie</h1>
+      <p class="lead" id="noTokenMsg">Deze pagina werkt alleen via de persoonlijke link die het installatiescript in je terminal toont. Die link bevat een geheime sleutel.</p>
+      <p class="sub">Geen link meer? Draai het script opnieuw op je server.</p>
+    </div>
+  </div>
+</main>
+
+<!-- Wizard -->
+<main id="vWizard" class="hidden">
+  <div class="wrap">
+    <ol class="steps" id="stepList"></ol>
+
+    <form class="card" id="form" novalidate autocomplete="off">
+
+      <!-- 1. Wat installeren -->
+      <section data-step="mode">
+        <h1>Welkom! Wat wil je installeren?</h1>
+        <p class="lead">Deze wizard installeert Pterodactyl op deze server. Je vult alles hier in, daarna doet de installer de rest en zie je de voortgang live.</p>
+
+        <div class="sysgrid" id="sysgrid"></div>
+        <div id="sysNotes"></div>
+
+        <div class="opts" style="margin-top:18px">
+          <label class="opt"><input type="radio" name="INSTALL_MODE" value="both" checked>
+            <div class="box"><div class="ico"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="4" width="18" height="7" rx="2"/><rect x="3" y="13" width="18" height="7" rx="2"/></svg></div>
+              <div class="t">Panel + node <span class="badge">Meest gekozen</span></div>
+              <div class="d">Alles op deze ene server: het panel en de gameservers.</div></div></label>
+          <label class="opt"><input type="radio" name="INSTALL_MODE" value="panel">
+            <div class="box"><div class="ico"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="4" width="18" height="14" rx="2"/><path d="M3 9h18"/></svg></div>
+              <div class="t">Alleen het panel</div>
+              <div class="d">De gameservers (nodes) draaien op andere servers.</div></div></label>
+          <label class="opt"><input type="radio" name="INSTALL_MODE" value="node">
+            <div class="box"><div class="ico"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="13" width="18" height="7" rx="2"/><path d="M7 16.5h.01M12 4v6m-3-3 3 3 3-3"/></svg></div>
+              <div class="t">Alleen een node</div>
+              <div class="d">Wings installeren en koppelen aan een bestaand panel.</div></div></label>
+          <label class="opt"><input type="radio" name="INSTALL_MODE" value="phpfix">
+            <div class="box"><div class="ico"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 3l8 4v5c0 5-3.5 8-8 9-4.5-1-8-4-8-9V7z"/><path d="m9 12 2 2 4-4"/></svg></div>
+              <div class="t">Alleen PHP bijwerken</div>
+              <div class="d">Bestaande server patchen voor PHP2Shell (21-10-2026).</div></div></label>
+        </div>
+      </section>
+
+      <!-- 2. Adres, SSL en versie -->
+      <section data-step="address" class="hidden">
+        <div data-if="panel">
+          <h1>Waar moet het panel bereikbaar zijn?</h1>
+          <p class="lead">Kies het adres waarop jij en je klanten straks inloggen.</p>
+          <div class="opts">
+            <label class="opt"><input type="radio" name="PANEL_DOMAIN_MODE" value="sslip" checked>
+              <div class="box"><div class="t">Gratis adres met SSL <span class="badge">Aanbevolen</span></div>
+                <div class="d">Geen domein nodig. Werkt direct, met een echt Let's Encrypt certificaat.</div>
+                <div class="u mono" data-text="sslipUrl"></div></div></label>
+            <label class="opt"><input type="radio" name="PANEL_DOMAIN_MODE" value="domain">
+              <div class="box"><div class="t">Eigen domein</div>
+                <div class="d">Bijvoorbeeld panel.jouwbedrijf.nl, met gratis SSL.</div></div></label>
+            <label class="opt"><input type="radio" name="PANEL_DOMAIN_MODE" value="ip">
+              <div class="box"><div class="t">Alleen IP-adres <span class="badge warn">Geen SSL</span></div>
+                <div class="d">Alleen voor testen. Browsers tonen 'niet veilig'.</div>
+                <div class="u mono" data-text="ipUrl"></div></div></label>
+          </div>
+
+          <div data-if="PANEL_DOMAIN_MODE=sslip" class="note ok">
+            <span>&#10003;</span><span><b>Zo werkt het:</b> sslip.io stuurt <span class="mono" data-text="sslipHost"></span> automatisch door naar het IP van deze server. Let's Encrypt geeft daar een gratis certificaat op. Je hoeft niets in te stellen, alleen poort 80 en 443 moeten open staan.</span>
+          </div>
+          <div data-if="PANEL_DOMAIN_MODE=ip" class="note warn">
+            <span>!</span><span>Op een kaal IP-adres kan geen certificaat. Wil je SSL zonder domein? Kies dan het gratis sslip.io adres.</span>
+          </div>
+
+          <div data-if="PANEL_DOMAIN_MODE=domain" class="grid" style="margin-top:18px">
+            <div class="field full">
+              <label for="FQDN">Domein van het panel</label>
+              <input type="text" id="FQDN" name="FQDN" placeholder="panel.jouwbedrijf.nl" inputmode="url" autocapitalize="off" spellcheck="false">
+              <div class="hint">Maak eerst een A-record aan dat naar <b class="mono" data-text="ip"></b> wijst. Gebruik je Cloudflare? Zet de proxy (oranje wolk) dan uit tijdens de installatie.</div>
+              <div class="err"></div>
+            </div>
+            <label class="switch full"><input type="checkbox" name="USE_SSL" checked><span class="tg"></span>
+              <span><span class="t">Gratis SSL via Let's Encrypt</span><br><span class="d">Sterk aangeraden. Het certificaat wordt automatisch verlengd.</span></span></label>
+          </div>
+
+          <h2 style="margin-top:30px">Pterodactyl versie</h2>
+          <p class="sub">Twijfel je? Kies de stabiele versie.</p>
+          <div class="opts">
+            <label class="opt"><input type="radio" name="PANEL_CHANNEL_SEL" value="v1" checked>
+              <div class="box"><div class="t">1.x stabiel <span class="badge">Aanbevolen</span></div>
+                <div class="d">Nieuwste 1.x release, met PHP <span data-text="php_v1"></span>.</div>
+                <div class="u mono" data-text="ver_v1"></div></div></label>
+            <label class="opt"><input type="radio" name="PANEL_CHANNEL_SEL" value="v2">
+              <div class="box"><div class="t">2.0 open beta <span class="badge warn">Beta</span></div>
+                <div class="d">Nieuwe admin, extensies en thema's. Nog niet voor productie.</div>
+                <div class="u mono" data-text="ver_v2"></div></div></label>
+            <label class="opt"><input type="radio" name="PANEL_CHANNEL_SEL" value="custom">
+              <div class="box"><div class="t">Zelf kiezen</div>
+                <div class="d">Een specifieke versie, bijvoorbeeld v1.11.11.</div></div></label>
+          </div>
+          <div data-if="PANEL_CHANNEL_SEL=custom" class="grid" style="margin-top:16px">
+            <div class="field"><label for="PANEL_CHANNEL_CUSTOM">Versie tag</label>
+              <input type="text" id="PANEL_CHANNEL_CUSTOM" name="PANEL_CHANNEL_CUSTOM" placeholder="v1.15.1" spellcheck="false" data-errfor="PANEL_CHANNEL"><div class="err"></div></div>
+          </div>
+          <div data-if="PANEL_CHANNEL_SEL=v2" class="note warn"><span>!</span><span>Pterodactyl raadt aan 2.0 eerst op een testpanel te proberen. Nests zijn in 2.0 vervangen door tags, check dus of je billing module dat al ondersteunt.</span></div>
+        </div>
+
+        <div data-if="nodeonly">
+          <h1>Adres van deze node</h1>
+          <p class="lead">Draait je panel op https (aanbevolen), dan moet de node ook SSL hebben. Anders kan de browser niet met de console van de servers praten.</p>
+          <div class="opts">
+            <label class="opt"><input type="radio" name="NODE_DOMAIN_MODE" value="sslip" checked>
+              <div class="box"><div class="t">Gratis adres met SSL <span class="badge">Aanbevolen</span></div>
+                <div class="d">Geen domein nodig, via sslip.io en Let's Encrypt.</div>
+                <div class="u mono" data-text="sslipHost"></div></div></label>
+            <label class="opt"><input type="radio" name="NODE_DOMAIN_MODE" value="domain">
+              <div class="box"><div class="t">Eigen domein</div>
+                <div class="d">Bijvoorbeeld node1.jouwbedrijf.nl, met gratis SSL.</div></div></label>
+            <label class="opt"><input type="radio" name="NODE_DOMAIN_MODE" value="none">
+              <div class="box"><div class="t">Geen SSL <span class="badge warn">Alleen http</span></div>
+                <div class="d">Alleen als je panel ook zonder SSL draait.</div></div></label>
+          </div>
+          <div class="grid" style="margin-top:18px">
+            <div class="field full" data-if="NODE_DOMAIN_MODE=domain">
+              <label for="NODE_FQDN">Domein van de node</label>
+              <input type="text" id="NODE_FQDN" name="NODE_FQDN" placeholder="node1.jouwbedrijf.nl" autocapitalize="off" spellcheck="false">
+              <div class="hint">Met een A-record naar <b class="mono" data-text="ip"></b>, zonder Cloudflare proxy.</div>
+              <div class="err"></div>
+            </div>
+            <div class="field full" data-if="!NODE_DOMAIN_MODE=none">
+              <label for="NODE_LE_EMAIL">E-mailadres voor Let's Encrypt <span class="badge grey">optioneel</span></label>
+              <input type="email" id="NODE_LE_EMAIL" name="NODE_LE_EMAIL" placeholder="jij@jouwbedrijf.nl" data-errfor="ADMIN_EMAIL">
+              <div class="hint">Alleen voor een mail als het certificaat onverhoopt niet verlengd kan worden.</div>
+              <div class="err"></div>
+            </div>
+          </div>
+          <div data-if="NODE_DOMAIN_MODE=none" class="note warn"><span>!</span><span>Zet in het panel bij deze node 'Communicate Over SSL' uit.</span></div>
+
+          <h2 style="margin-top:30px">Wings versie</h2>
+          <div class="opts">
+            <label class="opt"><input type="radio" name="WINGS_CHANNEL_SEL" value="v1" checked>
+              <div class="box"><div class="t">Nieuwste Wings 1.x <span class="badge">Aanbevolen</span></div>
+                <div class="d">Werkt met panel 1.x en 2.0.</div><div class="u mono" data-text="ver_wings"></div></div></label>
+            <label class="opt"><input type="radio" name="WINGS_CHANNEL_SEL" value="custom">
+              <div class="box"><div class="t">Zelf kiezen</div><div class="d">Bijvoorbeeld v1.13.3.</div></div></label>
+          </div>
+          <div data-if="WINGS_CHANNEL_SEL=custom" class="grid" style="margin-top:16px">
+            <div class="field"><label for="WINGS_CHANNEL_CUSTOM">Versie tag</label>
+              <input type="text" id="WINGS_CHANNEL_CUSTOM" name="WINGS_CHANNEL_CUSTOM" placeholder="v1.13.3" spellcheck="false" data-errfor="WINGS_CHANNEL"><div class="err"></div></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 3. Admin account -->
+      <section data-step="account" class="hidden">
+        <h1>Je admin account</h1>
+        <p class="lead">Hiermee log je straks in op het panel.</p>
+        <div class="grid">
+          <div class="field full">
+            <label for="ADMIN_EMAIL">E-mailadres</label>
+            <input type="email" id="ADMIN_EMAIL" name="ADMIN_EMAIL" placeholder="jij@jouwbedrijf.nl" required>
+            <div class="hint">Wordt ook gebruikt voor Let's Encrypt.</div>
+            <div class="err"></div>
+          </div>
+          <div class="field">
+            <label for="ADMIN_USER">Gebruikersnaam</label>
+            <input type="text" id="ADMIN_USER" name="ADMIN_USER" value="admin" autocapitalize="off" spellcheck="false">
+            <div class="err"></div>
+          </div>
+          <div class="field">
+            <label for="TIMEZONE">Tijdzone</label>
+            <input type="text" id="TIMEZONE" name="TIMEZONE" value="Europe/Amsterdam" list="tzlist" spellcheck="false">
+            <datalist id="tzlist"></datalist>
+            <div class="err"></div>
+          </div>
+          <div class="field">
+            <label for="ADMIN_FIRST">Voornaam</label>
+            <input type="text" id="ADMIN_FIRST" name="ADMIN_FIRST" value="Wired">
+            <div class="err"></div>
+          </div>
+          <div class="field">
+            <label for="ADMIN_LAST">Achternaam</label>
+            <input type="text" id="ADMIN_LAST" name="ADMIN_LAST" value="Hosting">
+            <div class="err"></div>
+          </div>
+          <div class="field full">
+            <label for="ADMIN_PASS">Wachtwoord</label>
+            <div class="inrow">
+              <input type="password" id="ADMIN_PASS" name="ADMIN_PASS" placeholder="Leeg laten = automatisch een sterk wachtwoord" autocomplete="new-password">
+              <button type="button" class="btn small" data-act="togglepass" data-target="ADMIN_PASS">Toon</button>
+              <button type="button" class="btn small" data-act="genpass" data-target="ADMIN_PASS">Genereer</button>
+            </div>
+            <div class="hint">Minimaal 8 tekens. Je ziet het wachtwoord na afloop ook terug.</div>
+            <div class="err"></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 4. Database -->
+      <section data-step="database" class="hidden">
+        <h1>Databases</h1>
+        <p class="lead">De standaardwaarden zijn prima. Pas ze alleen aan als je een eigen naamgeving wilt.</p>
+
+        <div data-if="panel">
+          <h2>Database van het panel</h2>
+          <p class="sub">Hier slaat het panel gebruikers, servers en instellingen in op.</p>
+          <div class="grid">
+            <div class="field">
+              <label for="DB_NAME">Naam van de database</label>
+              <input type="text" id="DB_NAME" name="DB_NAME" value="panel" spellcheck="false">
+              <div class="err"></div>
+            </div>
+            <div class="field">
+              <label for="DB_USER">Database gebruiker</label>
+              <input type="text" id="DB_USER" name="DB_USER" value="pterodactyl" spellcheck="false">
+              <div class="err"></div>
+            </div>
+            <div class="field full">
+              <label for="DB_PASS">Wachtwoord van de database gebruiker</label>
+              <div class="inrow">
+                <input type="password" id="DB_PASS" name="DB_PASS" placeholder="Leeg laten = automatisch genereren (aanbevolen)" autocomplete="new-password">
+                <button type="button" class="btn small" data-act="togglepass" data-target="DB_PASS">Toon</button>
+              </div>
+              <div class="hint">8-64 tekens: letters, cijfers en _ . @ # % ^ * + = ! , : -</div>
+              <div class="err"></div>
+            </div>
+          </div>
+        </div>
+
+        <h2>Database host voor klanten</h2>
+        <p class="sub">Hiermee kunnen klanten zelf databases aanmaken voor hun server (bijvoorbeeld voor plugins) en verbinden vanaf hun pc met HeidiSQL of DBeaver.</p>
+        <label class="switch"><input type="checkbox" name="SETUP_DBHOST" checked><span class="tg"></span>
+          <span><span class="t">Database host instellen</span><br><span class="d">MySQL gaat dan luisteren op poort 3306<span data-if="panel">, en de host komt automatisch in het panel</span>.</span></span></label>
+
+        <div data-if="SETUP_DBHOST=1" class="grid" style="margin-top:18px">
+          <div class="field">
+            <label for="DBHOST_NAME">Naam in het panel</label>
+            <input type="text" id="DBHOST_NAME" name="DBHOST_NAME" value="nl-db-1">
+            <div class="err"></div>
+          </div>
+          <div class="field">
+            <label for="DBHOST_FQDN">Adres dat klanten zien</label>
+            <input type="text" id="DBHOST_FQDN" name="DBHOST_FQDN" spellcheck="false" autocapitalize="off">
+            <div class="hint">Leeg = het adres van deze server.</div>
+            <div class="err"></div>
+          </div>
+          <div class="field">
+            <label for="DBADMIN_USER">Naam van de beheeraccount</label>
+            <input type="text" id="DBADMIN_USER" name="DBADMIN_USER" value="pteroadmin" spellcheck="false">
+            <div class="hint">Het wachtwoord wordt automatisch gemaakt.</div>
+            <div class="err"></div>
+          </div>
+          <div class="field">
+            <label for="DBADMIN_HOST_SEL">Beheeraccount mag verbinden vanaf</label>
+            <select id="DBADMIN_HOST_SEL" name="DBADMIN_HOST_SEL" data-errfor="DBADMIN_HOST">
+              <option value="127.0.0.1">Alleen deze server (aanbevolen)</option>
+              <option value="%">Elk IP-adres (minst veilig)</option>
+              <option value="custom">Zelf invullen</option>
+            </select>
+            <div class="err"></div>
+          </div>
+          <div class="field full" data-if="DBADMIN_HOST_SEL=custom">
+            <label for="DBADMIN_HOST_CUSTOM">IP of patroon</label>
+            <input type="text" id="DBADMIN_HOST_CUSTOM" name="DBADMIN_HOST_CUSTOM" placeholder="10.0.0.% of 203.0.113.20" spellcheck="false" data-errfor="DBADMIN_HOST">
+            <div class="err"></div>
+          </div>
+          <div class="note warn full" data-if="DBADMIN_HOST_SEL=%"><span>!</span><span>Een beheeraccount met volledige rechten die vanaf het hele internet bereikbaar is, is een risico. Gebruik dit alleen met fail2ban of een sterk beperkte firewall.</span></div>
+        </div>
+      </section>
+
+      <!-- 5. Node -->
+      <section data-step="node" class="hidden">
+        <h1>Node instellen</h1>
+        <p class="lead" data-if="panel">Het panel staat op deze server, dus de installer kan de node zelf aanmaken en Wings meteen starten.</p>
+        <p class="lead" data-if="nodeonly">Met een Application API key van je panel maakt de installer de node daar zelf aan en start Wings meteen.</p>
+
+        <label class="switch"><input type="checkbox" name="AUTO_NODE" checked><span class="tg"></span>
+          <span><span class="t">Node automatisch aanmelden bij het panel</span><br><span class="d">Locatie, node, Wings-config en poorten worden voor je geregeld.</span></span></label>
+
+        <div data-if="AUTO_NODE=1">
+          <div data-if="nodeonly" class="grid" style="margin-top:18px">
+            <div class="field full">
+              <label for="PANEL_URL">URL van je panel</label>
+              <input type="url" id="PANEL_URL" name="PANEL_URL" placeholder="https://panel.jouwbedrijf.nl" spellcheck="false" autocapitalize="off">
+              <div class="err"></div>
+            </div>
+            <div class="field full">
+              <label for="PANEL_API_KEY">Application API key</label>
+              <div class="inrow">
+                <input type="password" id="PANEL_API_KEY" name="PANEL_API_KEY" placeholder="ptla_..." spellcheck="false" autocomplete="off">
+                <button type="button" class="btn small" data-act="togglepass" data-target="PANEL_API_KEY">Toon</button>
+              </div>
+              <div class="hint">Maak hem aan in je panel onder Admin &rsaquo; Application API, met Read &amp; Write op Nodes, Locations en Allocations.</div>
+              <div class="err"></div>
+            </div>
+            <div class="field">
+              <label for="LOCATION_ID">Bestaande locatie ID <span class="badge grey">optioneel</span></label>
+              <input type="text" id="LOCATION_ID" name="LOCATION_ID" inputmode="numeric" placeholder="Leeg = nieuwe locatie">
+              <div class="err"></div>
+            </div>
+          </div>
+
+          <div class="grid" style="margin-top:18px">
+            <div class="field">
+              <label for="NODE_NAME">Naam van de node</label>
+              <input type="text" id="NODE_NAME" name="NODE_NAME" value="node1">
+              <div class="err"></div>
+            </div>
+            <div class="field">
+              <label for="ALLOC_PORTS">Poorten voor gameservers</label>
+              <input type="text" id="ALLOC_PORTS" name="ALLOC_PORTS" placeholder="25565-25600" spellcheck="false">
+              <div class="hint">Bereik of lijst, bv. 25565-25600 of 27015,30120. Leeg = later zelf toevoegen.</div>
+              <div class="err"></div>
+            </div>
+            <div class="field" data-if="!LOCATION_ID_SET">
+              <label for="LOCATION_SHORT">Locatiecode</label>
+              <input type="text" id="LOCATION_SHORT" name="LOCATION_SHORT" value="nl1" spellcheck="false">
+              <div class="hint">Kort, zonder spaties, bv. nl1 of ams.</div>
+              <div class="err"></div>
+            </div>
+            <div class="field" data-if="!LOCATION_ID_SET">
+              <label for="LOCATION_LONG">Omschrijving van de locatie</label>
+              <input type="text" id="LOCATION_LONG" name="LOCATION_LONG" value="WiredHosting Nederland">
+              <div class="err"></div>
+            </div>
+          </div>
+        </div>
+
+        <details class="adv">
+          <summary>Geavanceerd: geheugen, schijf en poorten van Wings</summary>
+          <div class="grid" style="margin-top:6px">
+            <div class="field">
+              <label for="NODE_MEM_MB">Geheugen voor servers (MB)</label>
+              <input type="text" id="NODE_MEM_MB" name="NODE_MEM_MB" inputmode="numeric">
+              <div class="hint">Leeg = automatisch (alles min 1 GB voor het systeem).</div>
+              <div class="err"></div>
+            </div>
+            <div class="field">
+              <label for="NODE_DISK_MB">Schijfruimte voor servers (MB)</label>
+              <input type="text" id="NODE_DISK_MB" name="NODE_DISK_MB" inputmode="numeric">
+              <div class="hint">Leeg = automatisch (vrije ruimte min 5 GB).</div>
+              <div class="err"></div>
+            </div>
+            <div class="field">
+              <label for="NODE_DAEMON_PORT">Daemon poort</label>
+              <input type="text" id="NODE_DAEMON_PORT" name="NODE_DAEMON_PORT" value="8080" inputmode="numeric">
+              <div class="err"></div>
+            </div>
+            <div class="field">
+              <label for="NODE_SFTP_PORT">SFTP poort</label>
+              <input type="text" id="NODE_SFTP_PORT" name="NODE_SFTP_PORT" value="2022" inputmode="numeric">
+              <div class="err"></div>
+            </div>
+          </div>
+        </details>
+      </section>
+
+      <!-- 6. Overzicht -->
+      <section data-step="review" class="hidden">
+        <h1>Klopt alles?</h1>
+        <p class="lead">Controleer je keuzes. Klik op 'Wijzig' om iets aan te passen.</p>
+
+        <label class="switch" data-if="!phpfix" style="margin-bottom:18px"><input type="checkbox" name="SETUP_FW" checked><span class="tg"></span>
+          <span><span class="t">Firewall instellen</span><br><span class="d" id="fwDesc">Alleen de poorten die nodig zijn gaan open.</span></span></label>
+
+        <div class="sum" id="summary"></div>
+
+        <label class="switch" data-if="PANEL_CHANNEL_SEL=v2&panel" style="margin-top:18px"><input type="checkbox" id="betaOk"><span class="tg"></span>
+          <span><span class="t">Ik begrijp dat 2.0 een beta is</span><br><span class="d">Niet bedoeld voor productie; updaten gaat anders dan bij 1.x.</span></span></label>
+
+        <div id="reviewErrors"></div>
+        <div class="note" id="reviewTime"><span>&#9201;</span><span>De installatie duurt meestal 5 tot 15 minuten. Je kunt dit tabblad sluiten en later terugkomen via dezelfde link, de installatie loopt gewoon door.</span></div>
+      </section>
+
+      <div class="nav">
+        <button type="button" class="btn" id="btnBack">&larr; Vorige</button>
+        <button type="submit" class="btn primary" id="btnNext">Volgende &rarr;</button>
+      </div>
+    </form>
+  </div>
+</main>
+
+<!-- Voortgang -->
+<main id="vProgress" class="hidden">
+  <div class="wrap" style="grid-template-columns:1fr; max-width:860px">
+    <div class="card">
+      <div class="prog-head">
+        <div class="spinner" id="pIcon"></div>
+        <div>
+          <h1 id="pTitle">Installatie bezig</h1>
+          <div class="sub" style="margin:0" id="pSub">Even geduld, dit duurt meestal 5 tot 15 minuten.</div>
+        </div>
+      </div>
+
+      <div id="pRunning">
+        <div class="bar"><i id="pBar"></i></div>
+        <div class="bar-meta"><span id="pLabel">Starten...</span><span id="pMeta"></span></div>
+      </div>
+
+      <div id="pFail" class="hidden">
+        <div class="note bad"><span>&#10007;</span><span><b>Er ging iets mis:</b> <span id="pFailMsg"></span></span></div>
+        <div class="note"><span>i</span><span>Bekijk het log hieronder voor de details. Het volledige log staat ook op de server in <span class="mono">/var/lib/wiredhosting-installer/install.log</span>. Is de fout opgelost? Begin dan bij voorkeur op een schone server, of verwijder eerst wat er al is geinstalleerd.</span></div>
+        <div class="result-actions"><button type="button" class="btn" id="btnRetry">&larr; Terug naar de wizard</button></div>
+      </div>
+
+      <div id="pDone" class="hidden">
+        <div class="result-actions">
+          <a class="btn primary big hidden" id="btnPanel" target="_blank" rel="noopener">Open je panel &rarr;</a>
+          <button type="button" class="btn" id="btnCopy">Gegevens kopieren</button>
+          <button type="button" class="btn" id="btnDownload">Download als .txt</button>
+        </div>
+        <div class="note warn"><span>!</span><span><b>Bewaar deze gegevens goed.</b> Ze staan ook op de server in <span class="mono">/root/wiredhosting-panel.txt</span>. Na het afsluiten van de webinstaller zijn ze hier niet meer te zien.</span></div>
+        <h2>Je gegevens</h2>
+        <pre class="creds" id="pCreds"></pre>
+        <h2>Volgende stappen</h2>
+        <pre class="creds" id="pSummary"></pre>
+      </div>
+
+      <ul class="plist" id="pSteps"></ul>
+
+      <div class="term-wrap">
+        <div class="term-bar">
+          <b>Live log</b>
+          <button type="button" class="btn small" id="btnLog">Verbergen</button>
+        </div>
+        <pre class="term" id="pLog"></pre>
+      </div>
+
+      <div class="nav" id="pNav" style="justify-content:flex-end">
+        <button type="button" class="btn" id="btnShutdown" disabled>Webinstaller afsluiten</button>
+      </div>
+    </div>
+  </div>
+</main>
+
+<main id="vClosed" class="hidden">
+  <div class="wrap" style="grid-template-columns:1fr; max-width:640px">
+    <div class="card center">
+      <div class="big-ico ok" style="margin:0 auto 16px"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12 5 5L20 7"/></svg></div>
+      <h1>De webinstaller is afgesloten</h1>
+      <p class="lead">De tijdelijke poort is weer dicht. Je kunt dit tabblad sluiten.</p>
+      <a class="btn primary hidden" id="btnPanel2" target="_blank" rel="noopener">Open je panel &rarr;</a>
+    </div>
+  </div>
+</main>
+
+<script>
+(function () {
+  "use strict";
+
+  // ------------------------------------------------------------------
+  //  Token uit de link halen en uit de adresbalk verwijderen
+  // ------------------------------------------------------------------
+  var TOKEN = "";
+  try {
+    var q = new URLSearchParams(location.search);
+    TOKEN = q.get("t") || sessionStorage.getItem("wh_token") || "";
+    if (q.get("t")) {
+      sessionStorage.setItem("wh_token", q.get("t"));
+    }
+  } catch (e) {
+    try { TOKEN = new URLSearchParams(location.search).get("t") || ""; } catch (e2) { TOKEN = ""; }
+  }
+  if (location.search) {
+    try { history.replaceState(null, "", location.pathname); } catch (e) { /* niets */ }
+  }
+
+  var $ = function (s, r) { return (r || document).querySelector(s); };
+  var $$ = function (s, r) { return Array.prototype.slice.call((r || document).querySelectorAll(s)); };
+  var form = $("#form");
+  var INFO = {};
+  var current = 0;
+
+  function api(method, path, body) {
+    var opts = { method: method, headers: { "X-Install-Token": TOKEN } };
+    if (body) {
+      opts.headers["Content-Type"] = "application/json";
+      opts.body = JSON.stringify(body);
+    }
+    return fetch(path, opts).then(function (r) {
+      return r.json().catch(function () { return {}; }).then(function (j) {
+        if (r.status === 401) { showView("vNoToken"); throw new Error(j.error || "unauthorized"); }
+        j._status = r.status;
+        return j;
+      });
+    });
+  }
+
+  function showView(id) {
+    ["vNoToken", "vWizard", "vProgress", "vClosed"].forEach(function (v) {
+      $("#" + v).classList.toggle("hidden", v !== id);
+    });
+    window.scrollTo(0, 0);
+  }
+
+  // ------------------------------------------------------------------
+  //  Formulier uitlezen
+  // ------------------------------------------------------------------
+  function val(name) {
+    var els = $$('[name="' + name + '"]', form);
+    if (!els.length) return "";
+    var el = els[0];
+    if (el.type === "radio") {
+      var c = els.filter(function (e) { return e.checked; })[0];
+      return c ? c.value : "";
+    }
+    if (el.type === "checkbox") return el.checked ? "1" : "0";
+    return (el.value || "").trim();
+  }
+  function mode() { return val("INSTALL_MODE"); }
+  function wantPanel() { return mode() === "both" || mode() === "panel"; }
+  function wantNode() { return mode() === "both" || mode() === "node"; }
+  function nodeOnly() { return mode() === "node"; }
+
+  function collect() {
+    var cfg = {};
+    $$("[name]", form).forEach(function (el) { cfg[el.name] = val(el.name); });
+    var out = {
+      INSTALL_MODE: cfg.INSTALL_MODE,
+      PANEL_DOMAIN_MODE: cfg.PANEL_DOMAIN_MODE,
+      FQDN: cfg.FQDN.toLowerCase(),
+      USE_SSL: cfg.USE_SSL,
+      ADMIN_EMAIL: nodeOnly() ? cfg.NODE_LE_EMAIL : cfg.ADMIN_EMAIL,
+      ADMIN_USER: cfg.ADMIN_USER,
+      ADMIN_FIRST: cfg.ADMIN_FIRST,
+      ADMIN_LAST: cfg.ADMIN_LAST,
+      ADMIN_PASS: $("#ADMIN_PASS").value,
+      TIMEZONE: wantPanel() ? cfg.TIMEZONE : (INFO.default_tz || "Europe/Amsterdam"),
+      PANEL_CHANNEL: cfg.PANEL_CHANNEL_SEL === "custom" ? cfg.PANEL_CHANNEL_CUSTOM : cfg.PANEL_CHANNEL_SEL,
+      WINGS_CHANNEL: cfg.WINGS_CHANNEL_SEL === "custom" ? cfg.WINGS_CHANNEL_CUSTOM : "v1",
+      DB_NAME: cfg.DB_NAME,
+      DB_USER: cfg.DB_USER,
+      DB_PASS: $("#DB_PASS").value,
+      SETUP_DBHOST: cfg.SETUP_DBHOST,
+      DBHOST_NAME: cfg.DBHOST_NAME,
+      DBHOST_FQDN: cfg.DBHOST_FQDN.toLowerCase(),
+      DBADMIN_USER: cfg.DBADMIN_USER,
+      DBADMIN_HOST: cfg.DBADMIN_HOST_SEL === "custom" ? cfg.DBADMIN_HOST_CUSTOM : cfg.DBADMIN_HOST_SEL,
+      NODE_DOMAIN_MODE: cfg.NODE_DOMAIN_MODE,
+      NODE_FQDN: cfg.NODE_FQDN.toLowerCase(),
+      AUTO_NODE: wantNode() ? cfg.AUTO_NODE : "0",
+      PANEL_URL: cfg.PANEL_URL.replace(/\/+$/, ""),
+      PANEL_API_KEY: cfg.PANEL_API_KEY,
+      NODE_NAME: cfg.NODE_NAME,
+      LOCATION_ID: nodeOnly() ? cfg.LOCATION_ID : "",
+      LOCATION_SHORT: cfg.LOCATION_SHORT,
+      LOCATION_LONG: cfg.LOCATION_LONG,
+      ALLOC_PORTS: cfg.ALLOC_PORTS.replace(/\s+/g, ""),
+      NODE_MEM_MB: cfg.NODE_MEM_MB,
+      NODE_DISK_MB: cfg.NODE_DISK_MB,
+      NODE_DAEMON_PORT: cfg.NODE_DAEMON_PORT || "8080",
+      NODE_SFTP_PORT: cfg.NODE_SFTP_PORT || "2022",
+      SETUP_FW: cfg.SETUP_FW
+    };
+    return out;
+  }
+
+  // ------------------------------------------------------------------
+  //  Zichtbaarheid (data-if="panel", "KEY=a,b", "!KEY=a", "a&b")
+  // ------------------------------------------------------------------
+  function cond(expr) {
+    return expr.split("&").every(function (part) {
+      var neg = part.charAt(0) === "!";
+      if (neg) part = part.slice(1);
+      var r;
+      if (part === "panel") r = wantPanel();
+      else if (part === "node") r = wantNode();
+      else if (part === "nodeonly") r = nodeOnly();
+      else if (part === "phpfix") r = mode() === "phpfix";
+      else if (part === "LOCATION_ID_SET") r = nodeOnly() && val("LOCATION_ID") !== "";
+      else {
+        var kv = part.split("=");
+        r = kv[1].split(",").indexOf(val(kv[0])) !== -1;
+      }
+      return neg ? !r : r;
+    });
+  }
+  function applyConditions() {
+    $$("[data-if]").forEach(function (el) { el.classList.toggle("hidden", !cond(el.getAttribute("data-if"))); });
+  }
+
+  // ------------------------------------------------------------------
+  //  Stappen
+  // ------------------------------------------------------------------
+  var STEPS = [
+    { id: "mode", title: "Installatie", show: function () { return true; } },
+    { id: "address", title: "Adres & SSL", show: function () { return mode() !== "phpfix"; } },
+    { id: "account", title: "Admin account", show: wantPanel },
+    { id: "database", title: "Databases", show: function () { return mode() !== "phpfix"; } },
+    { id: "node", title: "Node", show: wantNode },
+    { id: "review", title: "Overzicht", show: function () { return true; } }
+  ];
+  function visibleSteps() { return STEPS.filter(function (s) { return s.show(); }); }
+
+  function renderSteps() {
+    var vs = visibleSteps();
+    var list = $("#stepList");
+    list.innerHTML = "";
+    vs.forEach(function (s, i) {
+      var li = document.createElement("li");
+      li.className = i < current ? "done" : (i === current ? "active" : "");
+      var n = document.createElement("span");
+      n.className = "n";
+      n.textContent = i < current ? "\u2713" : String(i + 1);
+      var l = document.createElement("span");
+      l.className = "lbl";
+      l.textContent = s.title;
+      li.appendChild(n); li.appendChild(l);
+      if (i < current) li.addEventListener("click", function () { go(i); });
+      list.appendChild(li);
+    });
+    $$("section[data-step]").forEach(function (sec) {
+      sec.classList.toggle("hidden", sec.getAttribute("data-step") !== vs[current].id);
+    });
+    $("#btnBack").style.visibility = current === 0 ? "hidden" : "visible";
+    var last = current === vs.length - 1;
+    $("#btnNext").innerHTML = last ? "Installatie starten &rarr;" : "Volgende &rarr;";
+    $("#btnNext").classList.toggle("big", last);
+    applyConditions();
+    if (vs[current].id === "review") renderReview();
+  }
+
+  function go(i) {
+    current = Math.max(0, Math.min(i, visibleSteps().length - 1));
+    renderSteps();
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }
+
+  // ------------------------------------------------------------------
+  //  Controle in de browser (de echte controle doet installer.sh)
+  // ------------------------------------------------------------------
+  var RE = {
+    domain: /^(?=.{1,253}$)[a-z0-9]([a-z0-9-]{0,61}[a-z0-9])?(\.[a-z0-9]([a-z0-9-]{0,61}[a-z0-9])?)+$/i,
+    ip: /^(\d{1,3}\.){3}\d{1,3}$/,
+    email: /^[^@\s"'\\]+@[^@\s"'\\]+\.[a-z]{2,}$/i,
+    user: /^[a-z0-9_.-]{1,191}$/,
+    dbname: /^[A-Za-z0-9_]{1,64}$/,
+    dbuser: /^[A-Za-z0-9_]{1,32}$/,
+    secret: /^[A-Za-z0-9_.@#%^*+=!,:-]{8,64}$/,
+    name: /^[A-Za-z0-9 _.-]{1,100}$/,
+    text: /^[A-Za-z0-9 _.,()&\/-]{1,191}$/,
+    short: /^[A-Za-z0-9_.-]{1,60}$/,
+    ports: /^\d+(-\d+)?(,\d+(-\d+)?)*$/,
+    tag: /^v?\d+\.\d+\.\d+[A-Za-z0-9.-]*$/,
+    num: /^\d{3,9}$/,
+    port: /^\d{1,5}$/,
+    hostpat: /^[A-Za-z0-9.%:_-]{1,255}$/
+  };
+
+  function setErr(name, msg) {
+    var el = $('[name="' + name + '"]', form) || $('[data-errfor="' + name + '"]', form);
+    if (!el) return false;
+    var f = el.closest(".field");
+    if (!f) return false;
+    f.classList.toggle("bad", !!msg);
+    var e = $(".err", f);
+    if (e) e.textContent = msg || "";
+    return true;
+  }
+  function clearErrs() { $$(".field.bad", form).forEach(function (f) { f.classList.remove("bad"); }); }
+
+  function validateStep(id) {
+    var c = collect();
+    var errs = [];
+    function need(ok, field, msg) { if (!ok) errs.push([field, msg]); }
+    if (id === "address" && wantPanel()) {
+      if (c.PANEL_DOMAIN_MODE === "domain") {
+        need(RE.domain.test(c.FQDN) && !RE.ip.test(c.FQDN), "FQDN", "Vul een geldig domein in, bv. panel.jouwbedrijf.nl");
+      }
+      if (val("PANEL_CHANNEL_SEL") === "custom") need(RE.tag.test(c.PANEL_CHANNEL), "PANEL_CHANNEL_CUSTOM", "Bijvoorbeeld v1.15.1");
+    }
+    if (id === "address" && nodeOnly()) {
+      if (c.NODE_DOMAIN_MODE === "domain") need(RE.domain.test(c.NODE_FQDN) && !RE.ip.test(c.NODE_FQDN), "NODE_FQDN", "Vul een geldig domein in.");
+      if (c.ADMIN_EMAIL && c.NODE_DOMAIN_MODE !== "none") need(RE.email.test(c.ADMIN_EMAIL), "NODE_LE_EMAIL", "Vul een geldig e-mailadres in of laat het leeg.");
+      if (val("WINGS_CHANNEL_SEL") === "custom") need(RE.tag.test(c.WINGS_CHANNEL), "WINGS_CHANNEL_CUSTOM", "Bijvoorbeeld v1.13.3");
+    }
+    if (id === "account") {
+      need(RE.email.test(c.ADMIN_EMAIL), "ADMIN_EMAIL", "Vul een geldig e-mailadres in.");
+      need(RE.user.test(c.ADMIN_USER), "ADMIN_USER", "Alleen kleine letters, cijfers, punt, streep en underscore.");
+      need(c.ADMIN_FIRST.length > 0, "ADMIN_FIRST", "Vul een voornaam in.");
+      need(c.ADMIN_LAST.length > 0, "ADMIN_LAST", "Vul een achternaam in.");
+      need(!c.ADMIN_PASS || c.ADMIN_PASS.length >= 8, "ADMIN_PASS", "Gebruik minimaal 8 tekens, of laat het leeg.");
+      need(/^[A-Za-z_]+(\/[A-Za-z0-9_+-]+)*$/.test(c.TIMEZONE), "TIMEZONE", "Bijvoorbeeld Europe/Amsterdam");
+    }
+    if (id === "database") {
+      if (wantPanel()) {
+        need(RE.dbname.test(c.DB_NAME), "DB_NAME", "Alleen letters, cijfers en _ (max 64).");
+        need(RE.dbuser.test(c.DB_USER), "DB_USER", "Alleen letters, cijfers en _ (max 32).");
+        need(!c.DB_PASS || RE.secret.test(c.DB_PASS), "DB_PASS", "8-64 tekens, geen spaties, quotes, $ of backslash.");
+      }
+      if (c.SETUP_DBHOST === "1") {
+        need(RE.text.test(c.DBHOST_NAME), "DBHOST_NAME", "Letters, cijfers, spaties en - _ . ( )");
+        need(!c.DBHOST_FQDN || RE.domain.test(c.DBHOST_FQDN) || RE.ip.test(c.DBHOST_FQDN), "DBHOST_FQDN", "Vul een geldig domein of IP in, of laat het leeg.");
+        need(RE.dbuser.test(c.DBADMIN_USER), "DBADMIN_USER", "Alleen letters, cijfers en _ (max 32).");
+        need(RE.hostpat.test(c.DBADMIN_HOST), val("DBADMIN_HOST_SEL") === "custom" ? "DBADMIN_HOST_CUSTOM" : "DBADMIN_HOST_SEL", "Vul een IP of patroon in.");
+      }
+    }
+    if (id === "node") {
+      if (c.AUTO_NODE === "1") {
+        if (nodeOnly()) {
+          need(/^https?:\/\/[A-Za-z0-9.-]+(:\d+)?(\/.*)?$/.test(c.PANEL_URL), "PANEL_URL", "Bijvoorbeeld https://panel.jouwbedrijf.nl");
+          need(/^[A-Za-z0-9_.-]{20,}$/.test(c.PANEL_API_KEY), "PANEL_API_KEY", "Plak hier de Application API key (ptla_...).");
+          need(!c.LOCATION_ID || /^\d+$/.test(c.LOCATION_ID), "LOCATION_ID", "Een locatie ID is een getal.");
+        }
+        need(RE.name.test(c.NODE_NAME), "NODE_NAME", "Letters, cijfers, spaties en - _ .");
+        if (!c.LOCATION_ID) {
+          need(RE.short.test(c.LOCATION_SHORT), "LOCATION_SHORT", "Letters, cijfers en - _ . zonder spaties.");
+          need(RE.text.test(c.LOCATION_LONG), "LOCATION_LONG", "Letters, cijfers, spaties en - _ . , ( )");
+        }
+        need(!c.ALLOC_PORTS || RE.ports.test(c.ALLOC_PORTS), "ALLOC_PORTS", "Bijvoorbeeld 25565-25600 of 25565,25570-25580");
+      }
+      need(!c.NODE_MEM_MB || RE.num.test(c.NODE_MEM_MB), "NODE_MEM_MB", "Een getal in MB, of leeg.");
+      need(!c.NODE_DISK_MB || RE.num.test(c.NODE_DISK_MB), "NODE_DISK_MB", "Een getal in MB, of leeg.");
+      need(RE.port.test(c.NODE_DAEMON_PORT) && +c.NODE_DAEMON_PORT <= 65535, "NODE_DAEMON_PORT", "Geen geldige poort.");
+      need(RE.port.test(c.NODE_SFTP_PORT) && +c.NODE_SFTP_PORT <= 65535, "NODE_SFTP_PORT", "Geen geldige poort.");
+      need(c.NODE_DAEMON_PORT !== c.NODE_SFTP_PORT, "NODE_SFTP_PORT", "Moet anders zijn dan de daemon poort.");
+    }
+    clearErrs();
+    errs.forEach(function (e) { setErr(e[0], e[1]); });
+    if (errs.length) {
+      var el = $('[name="' + errs[0][0] + '"]', form);
+      if (el) {
+        var d = el.closest("details");
+        if (d) d.open = true;
+        el.focus();
+      }
+    }
+    return errs.length === 0;
+  }
+
+  // Fout van de server terugleiden naar het juiste veld en de juiste stap
+  var FIELD_STEP = {
+    INSTALL_MODE: "mode",
+    PANEL_DOMAIN_MODE: "address", FQDN: "address", USE_SSL: "address", PANEL_CHANNEL: "address",
+    NODE_DOMAIN_MODE: "address", NODE_FQDN: "address", WINGS_CHANNEL: "address",
+    ADMIN_USER: "account", ADMIN_FIRST: "account", ADMIN_LAST: "account", ADMIN_PASS: "account", TIMEZONE: "account",
+    DB_NAME: "database", DB_USER: "database", DB_PASS: "database", SETUP_DBHOST: "database",
+    DBHOST_NAME: "database", DBHOST_FQDN: "database", DBADMIN_USER: "database", DBADMIN_HOST: "database",
+    AUTO_NODE: "node", PANEL_URL: "node", PANEL_API_KEY: "node", NODE_NAME: "node", LOCATION_ID: "node",
+    LOCATION_SHORT: "node", LOCATION_LONG: "node", ALLOC_PORTS: "node", NODE_MEM_MB: "node", NODE_DISK_MB: "node",
+    NODE_DAEMON_PORT: "node", NODE_SFTP_PORT: "node"
+  };
+  function showServerErrors(errors) {
+    var box = $("#reviewErrors");
+    box.innerHTML = "";
+    var firstStep = null;
+    errors.forEach(function (e) {
+      var field = e.field;
+      if (field === "PANEL_CHANNEL") field = "PANEL_CHANNEL_CUSTOM";
+      if (field === "WINGS_CHANNEL") field = "WINGS_CHANNEL_CUSTOM";
+      if (field === "ADMIN_EMAIL" && nodeOnly()) field = "NODE_LE_EMAIL";
+      if (field === "ADMIN_EMAIL") FIELD_STEP.ADMIN_EMAIL = nodeOnly() ? "address" : "account";
+      setErr(field, e.message);
+      var st = FIELD_STEP[e.field];
+      if (st && firstStep === null) firstStep = st;
+      var n = document.createElement("div");
+      n.className = "note bad";
+      var a = document.createElement("span"); a.textContent = "\u2717";
+      var b = document.createElement("span"); b.textContent = e.message;
+      n.appendChild(a); n.appendChild(b);
+      if (st) {
+        var link = document.createElement("a");
+        link.textContent = " Aanpassen";
+        link.href = "#";
+        link.addEventListener("click", function (ev) { ev.preventDefault(); goStep(st); });
+        b.appendChild(link);
+      }
+      box.appendChild(n);
+    });
+  }
+  function goStep(id) {
+    var vs = visibleSteps();
+    for (var i = 0; i < vs.length; i++) if (vs[i].id === id) { go(i); return; }
+  }
+
+  // ------------------------------------------------------------------
+  //  Overzicht
+  // ------------------------------------------------------------------
+  function renderReview() {
+    var c = collect();
+    var sum = $("#summary");
+    sum.innerHTML = "";
+    $("#reviewErrors").innerHTML = "";
+    function section(title, step, rows) {
+      var s = document.createElement("div");
+      s.className = "sec";
+      var t = document.createElement("span"); t.textContent = title;
+      s.appendChild(t);
+      if (step) {
+        var a = document.createElement("a"); a.textContent = "Wijzig";
+        a.addEventListener("click", function () { goStep(step); });
+        s.appendChild(a);
+      }
+      sum.appendChild(s);
+      var dl = document.createElement("dl");
+      rows.forEach(function (r) {
+        if (r === null) return;
+        var dt = document.createElement("dt"); dt.textContent = r[0];
+        var dd = document.createElement("dd"); dd.textContent = r[1];
+        dl.appendChild(dt); dl.appendChild(dd);
+      });
+      sum.appendChild(dl);
+    }
+    var labels = { both: "Panel + node", panel: "Alleen het panel", node: "Alleen een node (Wings)", phpfix: "Alleen PHP bijwerken" };
+    section("Installatie", "mode", [["Wat", labels[c.INSTALL_MODE]], ["Server", (INFO.os || "?") + " (" + (INFO.public_ip || "?") + ")"]]);
+    if (c.INSTALL_MODE === "phpfix") {
+      $("#fwDesc").textContent = "";
+      return;
+    }
+    if (wantPanel()) {
+      var url, ssl;
+      if (c.PANEL_DOMAIN_MODE === "sslip") { url = "https://" + (INFO.sslip_host || "?"); ssl = "Ja, gratis via sslip.io + Let's Encrypt"; }
+      else if (c.PANEL_DOMAIN_MODE === "ip") { url = "http://" + (INFO.public_ip || "?"); ssl = "Nee (IP-adres)"; }
+      else { url = (c.USE_SSL === "1" ? "https://" : "http://") + c.FQDN; ssl = c.USE_SSL === "1" ? "Ja, Let's Encrypt" : "Nee"; }
+      var ver = c.PANEL_CHANNEL === "v1" ? "1.x stabiel" + (INFO.versions && INFO.versions.panel_v1 ? " (" + INFO.versions.panel_v1 + ")" : "")
+        : c.PANEL_CHANNEL === "v2" ? "2.0 beta" + (INFO.versions && INFO.versions.panel_v2 ? " (" + INFO.versions.panel_v2 + ")" : "")
+        : c.PANEL_CHANNEL;
+      section("Panel", "address", [["Adres", url], ["SSL", ssl], ["Versie", ver]]);
+      section("Admin account", "account", [["E-mail", c.ADMIN_EMAIL], ["Gebruikersnaam", c.ADMIN_USER], ["Naam", c.ADMIN_FIRST + " " + c.ADMIN_LAST],
+        ["Wachtwoord", c.ADMIN_PASS ? "Zelf ingesteld" : "Wordt automatisch gemaakt"], ["Tijdzone", c.TIMEZONE]]);
+    } else {
+      var naddr = c.NODE_DOMAIN_MODE === "sslip" ? (INFO.sslip_host || "?") + " (gratis SSL)" : c.NODE_DOMAIN_MODE === "domain" ? c.NODE_FQDN + " (Let's Encrypt)" : "Geen domein, geen SSL";
+      section("Node adres", "address", [["Adres", naddr], ["Wings", c.WINGS_CHANNEL === "v1" ? "Nieuwste 1.x" + (INFO.versions && INFO.versions.wings ? " (" + INFO.versions.wings + ")" : "") : c.WINGS_CHANNEL]]);
+    }
+    var db = [];
+    if (wantPanel()) {
+      db.push(["Panel database", c.DB_NAME]);
+      db.push(["Database gebruiker", c.DB_USER]);
+      db.push(["Wachtwoord", c.DB_PASS ? "Zelf ingesteld" : "Wordt automatisch gemaakt"]);
+    }
+    if (c.SETUP_DBHOST === "1") {
+      db.push(["Database host", c.DBHOST_NAME + " op " + (c.DBHOST_FQDN || "het adres van deze server") + ":3306"]);
+      db.push(["Beheeraccount", c.DBADMIN_USER + "@" + c.DBADMIN_HOST]);
+    } else {
+      db.push(["Database host", "Niet instellen"]);
+    }
+    section("Databases", "database", db);
+    if (wantNode()) {
+      var nrows = [];
+      if (c.AUTO_NODE === "1") {
+        if (nodeOnly()) nrows.push(["Panel", c.PANEL_URL]);
+        nrows.push(["Node", c.NODE_NAME]);
+        nrows.push(["Locatie", c.LOCATION_ID ? "Bestaande locatie #" + c.LOCATION_ID : c.LOCATION_SHORT + " (" + c.LOCATION_LONG + ")"]);
+        nrows.push(["Gameserver poorten", c.ALLOC_PORTS || "Later zelf toevoegen"]);
+      } else {
+        nrows.push(["Aanmelden", "Handmatig, na de installatie"]);
+      }
+      nrows.push(["Geheugen / schijf", (c.NODE_MEM_MB ? c.NODE_MEM_MB + " MB" : "automatisch") + " / " + (c.NODE_DISK_MB ? c.NODE_DISK_MB + " MB" : "automatisch")]);
+      nrows.push(["Wings poorten", "daemon " + c.NODE_DAEMON_PORT + ", SFTP " + c.NODE_SFTP_PORT]);
+      section("Node", "node", nrows);
+    }
+    var ports = ["22 (SSH)"];
+    if (wantPanel()) ports.push("80", "443");
+    else if (c.NODE_DOMAIN_MODE !== "none") ports.push("80");
+    if (wantNode()) { ports.push(c.NODE_DAEMON_PORT, c.NODE_SFTP_PORT); if (c.AUTO_NODE === "1" && c.ALLOC_PORTS) ports.push(c.ALLOC_PORTS); }
+    if (c.SETUP_DBHOST === "1") ports.push("3306");
+    $("#fwDesc").textContent = "Opent alleen wat nodig is: " + ports.join(", ") + ".";
+  }
+
+  // ------------------------------------------------------------------
+  //  Knoppen in de wizard
+  // ------------------------------------------------------------------
+  $("#btnBack").addEventListener("click", function () { go(current - 1); });
+  form.addEventListener("submit", function (ev) {
+    ev.preventDefault();
+    var vs = visibleSteps();
+    var id = vs[current].id;
+    if (id !== "review") {
+      if (!validateStep(id)) return;
+      go(current + 1);
+      return;
+    }
+    startInstall();
+  });
+  form.addEventListener("change", function (ev) {
+    if (ev.target.name === "INSTALL_MODE") { current = 0; renderSteps(); }
+    applyConditions();
+    if (visibleSteps()[current].id === "review") renderReview();
+  });
+  form.addEventListener("input", function (ev) {
+    var f = ev.target.closest && ev.target.closest(".field.bad");
+    if (f) f.classList.remove("bad");
+    if (ev.target.name === "LOCATION_ID") applyConditions();
+  });
+  form.addEventListener("click", function (ev) {
+    var b = ev.target.closest("[data-act]");
+    if (!b) return;
+    var input = $("#" + b.getAttribute("data-target"));
+    if (b.getAttribute("data-act") === "togglepass") {
+      input.type = input.type === "password" ? "text" : "password";
+      b.textContent = input.type === "password" ? "Toon" : "Verberg";
+    } else if (b.getAttribute("data-act") === "genpass") {
+      var chars = "ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz23456789";
+      var arr = new Uint32Array(20);
+      crypto.getRandomValues(arr);
+      var p = "";
+      for (var i = 0; i < arr.length; i++) p += chars[arr[i] % chars.length];
+      input.value = p;
+      input.type = "text";
+      var t = $('[data-act="togglepass"][data-target="' + input.id + '"]');
+      if (t) t.textContent = "Verberg";
+    }
+  });
+
+  function startInstall() {
+    var c = collect();
+    if (wantPanel() && val("PANEL_CHANNEL_SEL") === "v2" && !$("#betaOk").checked) {
+      showServerErrors([{ field: "", message: "Vink aan dat je begrijpt dat 2.0 een beta is." }]);
+      return;
+    }
+    var btn = $("#btnNext");
+    btn.disabled = true;
+    btn.textContent = "Controleren...";
+    api("POST", "/api/install", c).then(function (r) {
+      btn.disabled = false;
+      btn.innerHTML = "Installatie starten &rarr;";
+      if (r.errors && r.errors.length) { showServerErrors(r.errors); return; }
+      if (r.error) { showServerErrors([{ field: "", message: r.error }]); return; }
+      if (r.ok) { lastPlan = []; logNext = 0; $("#pLog").textContent = ""; showView("vProgress"); poll(); }
+    }).catch(function (e) {
+      btn.disabled = false;
+      btn.innerHTML = "Installatie starten &rarr;";
+      showServerErrors([{ field: "", message: "Geen verbinding met de webinstaller: " + e.message }]);
+    });
+  }
+
+  // ------------------------------------------------------------------
+  //  Voortgang
+  // ------------------------------------------------------------------
+  var logNext = 0, lastPlan = [], pollTimer = null, startTime = Date.now(), lastState = "";
+  var logEl = $("#pLog");
+
+  function renderPlan(st) {
+    var ul = $("#pSteps");
+    if (st.plan.length && st.plan.join("|") !== lastPlan.join("|")) {
+      lastPlan = st.plan.slice();
+      ul.innerHTML = "";
+      st.plan.forEach(function (label) {
+        var li = document.createElement("li");
+        var s = document.createElement("span"); s.className = "s";
+        var t = document.createElement("span"); t.textContent = label;
+        li.appendChild(s); li.appendChild(t);
+        ul.appendChild(li);
+      });
+    }
+    $$("li", ul).forEach(function (li, i) {
+      var n = i + 1;
+      var cls = "";
+      if (st.state === "done" || n < st.step) cls = "done";
+      else if (n === st.step) cls = st.state === "failed" ? "failed" : "active";
+      li.className = cls;
+      var s = $(".s", li);
+      s.textContent = cls === "done" ? "\u2713" : cls === "failed" ? "\u2717" : "";
+    });
+  }
+
+  function poll() {
+    clearTimeout(pollTimer);
+    api("GET", "/api/status?since=" + logNext).then(function (st) {
+      if (st.state === "idle") { showView("vWizard"); renderSteps(); return; }
+      renderPlan(st);
+      if (st.log && st.log.length) {
+        var nearBottom = logEl.scrollHeight - logEl.scrollTop - logEl.clientHeight < 60;
+        logEl.textContent += st.log.join("\n") + "\n";
+        if (nearBottom) logEl.scrollTop = logEl.scrollHeight;
+      }
+      logNext = st.next;
+      var total = st.total || 1;
+      var pct = st.state === "done" ? 100 : Math.max(3, Math.round(((st.step - 1) / total) * 100));
+      $("#pBar").style.width = pct + "%";
+      $("#pLabel").textContent = st.label || "Starten...";
+      $("#pMeta").textContent = (st.step ? "Stap " + st.step + " van " + total + " \u00b7 " : "") + pct + "%";
+
+      if (st.state !== lastState) {
+        lastState = st.state;
+        var icon = $("#pIcon");
+        if (st.state === "running") {
+          icon.className = "spinner"; icon.innerHTML = "";
+          $("#pTitle").textContent = "Installatie bezig";
+          $("#btnShutdown").disabled = true;
+        } else if (st.state === "done") {
+          icon.className = "big-ico ok";
+          icon.innerHTML = '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12 5 5L20 7"/></svg>';
+          $("#pTitle").textContent = "Installatie voltooid!";
+          $("#pSub").textContent = st.panel_url ? "Je panel staat klaar. Log in met de gegevens hieronder." : "Alles staat klaar.";
+          $("#pRunning").classList.add("hidden");
+          $("#pDone").classList.remove("hidden");
+          $("#pCreds").textContent = st.credentials || "Geen gegevens gevonden.";
+          $("#pSummary").textContent = st.summary || "";
+          if (st.panel_url) {
+            ["#btnPanel", "#btnPanel2"].forEach(function (s) { $(s).href = st.panel_url; $(s).classList.remove("hidden"); });
+          }
+          $("#btnShutdown").disabled = false;
+          $("#btnShutdown").classList.add("primary");
+          setLog(false);
+        } else if (st.state === "failed") {
+          icon.className = "big-ico bad";
+          icon.innerHTML = '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><path d="M6 6l12 12M18 6 6 18"/></svg>';
+          $("#pTitle").textContent = "Installatie mislukt";
+          $("#pSub").textContent = st.label ? "Bij: " + st.label : "";
+          $("#pRunning").classList.add("hidden");
+          $("#pFail").classList.remove("hidden");
+          $("#pFailMsg").textContent = st.error || "Onbekende fout.";
+          $("#btnShutdown").disabled = false;
+          setLog(true);
+        }
+      }
+      if (st.state === "running") pollTimer = setTimeout(poll, 1500);
+    }).catch(function () {
+      $("#pLabel").textContent = "Verbinding kwijt, opnieuw proberen...";
+      pollTimer = setTimeout(poll, 4000);
+    });
+  }
+
+  function setLog(show) {
+    $("#pLog").classList.toggle("hidden", !show);
+    $("#btnLog").textContent = show ? "Verbergen" : "Tonen";
+  }
+  $("#btnLog").addEventListener("click", function () { setLog($("#pLog").classList.contains("hidden")); });
+
+  $("#btnRetry").addEventListener("click", function () {
+    showView("vWizard");
+    current = visibleSteps().length - 1;
+    renderSteps();
+  });
+  $("#btnCopy").addEventListener("click", function () {
+    var text = $("#pCreds").textContent;
+    var b = $("#btnCopy");
+    function done() { b.textContent = "Gekopieerd \u2713"; setTimeout(function () { b.textContent = "Gegevens kopieren"; }, 2000); }
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(text).then(done, function () { fallbackCopy(text); done(); });
+    } else { fallbackCopy(text); done(); }
+  });
+  function fallbackCopy(text) {
+    var ta = document.createElement("textarea");
+    ta.value = text; document.body.appendChild(ta); ta.select();
+    try { document.execCommand("copy"); } catch (e) { /* niets */ }
+    document.body.removeChild(ta);
+  }
+  $("#btnDownload").addEventListener("click", function () {
+    var blob = new Blob([$("#pCreds").textContent + "\n\n" + $("#pSummary").textContent], { type: "text/plain" });
+    var a = document.createElement("a");
+    a.href = URL.createObjectURL(blob);
+    a.download = "wiredhosting-panel.txt";
+    document.body.appendChild(a); a.click();
+    setTimeout(function () { URL.revokeObjectURL(a.href); a.remove(); }, 500);
+  });
+  $("#btnShutdown").addEventListener("click", function () {
+    if (!confirm("Webinstaller afsluiten? De link werkt daarna niet meer. Je gegevens staan nog in /root/wiredhosting-panel.txt op de server.")) return;
+    api("POST", "/api/shutdown").then(function (r) {
+      if (r.ok) { try { sessionStorage.removeItem("wh_token"); } catch (e) { /* niets */ } showView("vClosed"); }
+      else alert(r.error || "Afsluiten lukte niet.");
+    });
+  });
+
+  // ------------------------------------------------------------------
+  //  Start
+  // ------------------------------------------------------------------
+  function fillInfo() {
+    var ip = INFO.public_ip || "?";
+    var host = INFO.sslip_host || "";
+    var texts = {
+      ip: ip,
+      sslipHost: host || "niet beschikbaar (geen publiek IP)",
+      sslipUrl: host ? "https://" + host : "",
+      ipUrl: "http://" + ip,
+      php_v1: INFO.php_v1 || "8.3",
+      ver_v1: (INFO.versions && INFO.versions.panel_v1) || "",
+      ver_v2: (INFO.versions && INFO.versions.panel_v2) || "",
+      ver_wings: (INFO.versions && INFO.versions.wings) || ""
+    };
+    $$("[data-text]").forEach(function (el) { el.textContent = texts[el.getAttribute("data-text")] || ""; });
+    $("#chipText").textContent = (INFO.os || "Server") + " \u00b7 " + ip;
+
+    var g = $("#sysgrid");
+    g.innerHTML = "";
+    [["Besturingssysteem", INFO.os || "?"], ["Publiek IP", ip], ["Geheugen", INFO.mem_mb ? (Math.round(INFO.mem_mb / 102.4) / 10) + " GB" : "?"],
+     ["Vrije schijf", INFO.disk_mb ? Math.round(INFO.disk_mb / 1024) + " GB" : "?"]].forEach(function (r) {
+      var d = document.createElement("div"); d.className = "sys";
+      var s = document.createElement("small"); s.textContent = r[0];
+      var b = document.createElement("b"); b.textContent = r[1]; b.title = r[1];
+      d.appendChild(s); d.appendChild(b); g.appendChild(d);
+    });
+    var notes = $("#sysNotes");
+    notes.innerHTML = "";
+    function note(cls, msg) {
+      var n = document.createElement("div"); n.className = "note " + cls;
+      var a = document.createElement("span"); a.textContent = "!";
+      var b = document.createElement("span"); b.textContent = msg;
+      n.appendChild(a); n.appendChild(b); notes.appendChild(n);
+    }
+    if (INFO.os_supported === "0") note("bad", "Dit besturingssysteem wordt niet ondersteund. Gebruik Ubuntu 22.04/24.04/26.04, Debian 11/12/13 of RHEL/Rocky/Alma 8/9.");
+    if (INFO.panel_exists === "1") note("warn", "Er staat al een panel op deze server. Een nieuw panel installeren kan alleen op een schone server; PHP bijwerken kan wel.");
+    if (INFO.wings_exists === "1") note("warn", "Er staat al Wings op deze server. Die wordt bij een node-installatie overschreven.");
+    if (INFO.mem_mb && +INFO.mem_mb < 1800) note("warn", "Deze server heeft minder dan 2 GB geheugen. Het panel werkt, maar voor gameservers is dat krap.");
+    if (!host) note("warn", "Het publieke IP kon niet worden bepaald, dus het gratis sslip.io adres is niet beschikbaar.");
+
+    // Voorstel voor geheugen en schijf als placeholder
+    if (INFO.mem_mb) $("#NODE_MEM_MB").placeholder = "automatisch: " + Math.max(1024, INFO.mem_mb - 1024);
+    if (INFO.disk_mb) $("#NODE_DISK_MB").placeholder = "automatisch: " + Math.max(10240, INFO.disk_mb - 5120);
+    if (INFO.default_tz) $("#TIMEZONE").value = INFO.default_tz;
+    updateDbHostPlaceholder();
+  }
+  function updateDbHostPlaceholder() {
+    var m = val("PANEL_DOMAIN_MODE"), def;
+    if (wantPanel()) def = m === "sslip" ? INFO.sslip_host : m === "domain" ? (val("FQDN") || "jouw panel domein") : INFO.public_ip;
+    else def = val("NODE_DOMAIN_MODE") === "sslip" ? INFO.sslip_host : val("NODE_DOMAIN_MODE") === "domain" ? (val("NODE_FQDN") || "jouw node domein") : INFO.public_ip;
+    $("#DBHOST_FQDN").placeholder = def || "";
+  }
+  form.addEventListener("change", updateDbHostPlaceholder);
+
+  function fillTimezones() {
+    var list = ["Europe/Amsterdam", "Europe/Brussels", "Europe/Berlin", "Europe/London", "Europe/Paris", "UTC"];
+    try { if (Intl.supportedValuesOf) list = list.concat(Intl.supportedValuesOf("timeZone")); } catch (e) { /* niets */ }
+    var dl = $("#tzlist"), seen = {};
+    list.forEach(function (tz) {
+      if (seen[tz]) return; seen[tz] = 1;
+      var o = document.createElement("option"); o.value = tz; dl.appendChild(o);
+    });
+  }
+
+  if (!TOKEN) { showView("vNoToken"); $("#chipText").textContent = "Geen toegang"; return; }
+  fillTimezones();
+  api("GET", "/api/status?since=0").then(function (st) {
+    return api("GET", "/api/info").then(function (info) {
+      INFO = info || {};
+      fillInfo();
+      if (INFO.panel_exists === "1") {
+        var r = $('[name="INSTALL_MODE"][value="phpfix"]');
+        if (r) r.checked = true;
+      }
+      if (st.state && st.state !== "idle") {
+        showView("vProgress");
+        poll();
+      } else {
+        showView("vWizard");
+        renderSteps();
+      }
+    });
+  }).catch(function (e) {
+    if (!$("#vNoToken").classList.contains("hidden")) return;
+    showView("vNoToken");
+    $("#noTokenMsg").textContent = "Kan geen verbinding maken met de webinstaller (" + e.message + "). Draai het script opnieuw op je server.";
+  });
+})();
+</script>
+</body>
+</html>
